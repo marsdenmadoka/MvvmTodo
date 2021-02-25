@@ -17,7 +17,7 @@ import java.util.List;
 //to get data from the noteobject to the recyclerviewer
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder>{
     private List<Note> notes = new ArrayList<>();//<Note> is from our room package
-
+    private OnItemClickListener listener;
     @NonNull
     @Override
     public NoteHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -44,6 +44,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder>{
        notifyDataSetChanged();
     }
 
+    public Note getNoteAt(int position){
+        return notes.get(position);//we want to get the note from the adapter to the outside
+        //to use it in method ItemTouchHelper in mainActivty
+    }
+
     class NoteHolder extends RecyclerView.ViewHolder{
         private TextView textViewTitle;
         private TextView textViewDescription;
@@ -54,6 +59,25 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder>{
             textViewTitle= itemView.findViewById(R.id.text_view_title);
             textViewDescription= itemView.findViewById(R.id.text_view_description);
             textViewPriority= itemView.findViewById(R.id.text_view_priority);
+
+         itemView.setOnClickListener(new View.OnClickListener() {// //item clicked on recycle view to edit our data
+           @Override
+           public void onClick(View view) {
+               int position = getAdapterPosition();
+               if(listener != null && position != RecyclerView.SCREEN_STATE_ON){
+
+                   listener.OnItemClick(notes.get(position));//notes is our arraylist above
+               }
+           }
+       });
         }
+    }
+
+    public interface OnItemClickListener{ //we want to provide a listener wen an item in recycler viewer is clik=cked
+        void OnItemClick(Note note);
+    }
+
+    public void SetOnItemClickListener(OnItemClickListener listener){// //item clicked on recycle view to edit our data
+  this.listener = listener;
     }
 }

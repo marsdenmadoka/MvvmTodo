@@ -13,9 +13,10 @@ import android.widget.NumberPicker;
 import android.widget.Toast;
 
 public class AddNoteActivity extends AppCompatActivity {
+    public static final String EXTRA_ID = "com.madokasoftwares.mvvm.EXTRA_ID";
     public static final String EXTRA_TITLE = "com.madokasoftwares.mvvm.EXTRA_TITLE";
     public static final String EXTRA_DESCRIPTION = "com.madokasoftwares.mvvm.EXTRA_DESCRIPTION";
-    public static final String EXTRA_PRIORITY = "com.madokasoftwares.mvvm.EXTRA_PRIORiTY";
+    public static final String EXTRA_PRIORITY = "com.madokasoftwares.mvvm.EXTRA_PRIORITY";
 
     private EditText editTextTitle;
     private EditText editTextDescription;
@@ -33,29 +34,21 @@ public class AddNoteActivity extends AppCompatActivity {
         numberPickerPriority.setMinValue(1);
         numberPickerPriority.setMaxValue(10);
 
-
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
-        setTitle("Add Note");
-    }
 
-     private void SaveNote(){
-        String title = editTextTitle.getText().toString();
-        String description = editTextDescription.getText().toString();
-        int priority = numberPickerPriority.getValue();
+        Intent intent = getIntent();
+        if(intent.hasExtra(EXTRA_ID)){////we are sending the id only when we want to update note
+            setTitle("Edit Note");
+            //fill the edit text with the values we sent over
+            editTextTitle.setText(intent.getStringExtra(EXTRA_TITLE));
+            editTextDescription.setText(intent.getStringExtra(EXTRA_DESCRIPTION));
+            numberPickerPriority.setValue(intent.getIntExtra(EXTRA_PRIORITY,1));
 
-        if(title.trim().isEmpty() || description.isEmpty()){
-            Toast.makeText(this,"please insert a title and description",Toast.LENGTH_SHORT).show();
-          return;
+        }else{
+            setTitle("Add Note");
         }
-        //if not empty/success we want to return the user to main activity carrying the data filled in the views using exras
-        //using extras intent
-         Intent data = new Intent();
-         data.putExtra(EXTRA_TITLE,title);//carry the title inform of extras
-         data.putExtra(EXTRA_DESCRIPTION,description);
-         data.putExtra(EXTRA_PRIORITY,priority);
-         setResult(RESULT_OK,data); //RESULT_OK is a constant
-         finish();
-     }
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -63,16 +56,41 @@ public class AddNoteActivity extends AppCompatActivity {
         menuInflater.inflate(R.menu.add_note_menu,menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.save_note:
                 SaveNote();
                 return true;
-             default:
+            default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
+
+    private void SaveNote(){
+        String title = editTextTitle.getText().toString();
+        String description = editTextDescription.getText().toString();
+        int priority = numberPickerPriority.getValue();
+
+        if(title.trim().isEmpty() || description.isEmpty()){
+            Toast.makeText(this,"please insert a title and description",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        //if not empty we want to return the user to main activity carrying the data filled in the views using exras
+        //using extras intent
+        Intent data = new Intent();
+        data.putExtra(EXTRA_TITLE,title);//carry the title inform of extras
+        data.putExtra(EXTRA_DESCRIPTION,description);
+        data.putExtra(EXTRA_PRIORITY,priority);
+
+        int id = getIntent().getIntExtra(EXTRA_ID,-1);
+        if(id != -1){
+        data.putExtra(EXTRA_ID,id);
+        }
+
+        setResult(RESULT_OK,data); //RESULT_OK is a constant
+        finish();
+    }
+
 }
+
