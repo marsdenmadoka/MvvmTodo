@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         noteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
            @Override
            public void onChanged(List<Note> notes) {
-         //update our reycleview
+         //update our reycleview to show our data
                adapter.setNotes(notes);//setNotes was our update method we created
 
            }
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == ADD_NOTE_REQUEST && requestCode == RESULT_OK){ //in order t receive te intents well our resultscode should match
+        if(requestCode == ADD_NOTE_REQUEST && resultCode == RESULT_OK){ //in order t receive te intents well our resultscode should match
           //we now retrive the extras
           String title = data.getStringExtra(AddNoteActivity.EXTRA_TITLE);
           String description = data.getStringExtra(AddNoteActivity.EXTRA_DESCRIPTION);
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,"Note Saved!",Toast.LENGTH_SHORT).show();
          // Log.e(TAG, "something is not right");
 
-        }else if(requestCode == EDIT_NOTE_REQUEST && requestCode == RESULT_OK){
+        }else if(requestCode == EDIT_NOTE_REQUEST && resultCode == RESULT_OK){
             int id = data.getIntExtra(AddNoteActivity.EXTRA_ID,1);
             if(id == -1){
                 Toast.makeText(this,"Note can't be updated",Toast.LENGTH_SHORT).show();
